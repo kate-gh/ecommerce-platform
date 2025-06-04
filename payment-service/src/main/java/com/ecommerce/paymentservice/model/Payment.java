@@ -1,5 +1,5 @@
 package com.ecommerce.paymentservice.model;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,6 +11,9 @@ public class Payment {
 
     @Column(nullable = false)
     private Long orderId;
+
+    @Column(name = "transaction_id") // Ajoutez cette annotation
+    private String transactionId;    // Ajoutez ce nouveau champ
 
     @Column(nullable = false)
     private Double amount;
@@ -28,6 +31,14 @@ public class Payment {
     public Payment() {
         this.createdAt = LocalDateTime.now();
         this.status = "PENDING";
+    }
+
+    public Payment(Long orderId, Double amount, String paymentMethod, String transactionId) {
+        this();
+        this.orderId = orderId;
+        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+        this.transactionId = transactionId; // Initialisation du nouveau champ
     }
 
     public Payment(Long orderId, Double amount, String paymentMethod) {
@@ -55,4 +66,12 @@ public class Payment {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
 }
