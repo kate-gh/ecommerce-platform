@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: payment
-          image: kategh/payment-service
+          image: kate-gh/payment-service
           ports:
             - containerPort: 8083
           env:

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: order
-          image: kategh/order-service
+          image: kate-gh/order-service
           ports:
             - containerPort: 8082
           env:

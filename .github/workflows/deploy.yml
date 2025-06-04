@@ -26,21 +26,20 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Build and push product-service image
         run: |
-          docker build -t kategh/product-service ./product-service
-          docker push kategh/product-service
+          docker build -t kate-gh/product-service ./product-service
+          docker push kate-gh/product-service
 
       - name: Build and push order-service image
         run: |
-          docker build -t kategh/order-service ./order-service
-          docker push kategh/order-service
+          docker build -t kate-gh/order-service ./order-service
+          docker push kate-gh/order-service
 
       - name: Build and push payment-service image
         run: |
-          docker build -t kategh/payment-service ./payment-service
-          docker push kategh/payment-service
+          docker build -t kate-gh/payment-service ./payment-service
+          docker push kate-gh/payment-service
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3

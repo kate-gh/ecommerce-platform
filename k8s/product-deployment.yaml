@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: product
-          image: kategh/product-service
+          image: kate-gh/product-service
           ports:
             - containerPort: 8081
           env:
