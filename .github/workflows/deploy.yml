@@ -18,9 +18,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Give execute permission to mvnw
+        run: chmod +x ./mvnw
+
       - name: Build JAR files
-        run: |
-          ./mvnw clean package -DskipTests
+        run: ./mvnw clean package -DskipTests
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
@@ -45,6 +47,8 @@ jobs:
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
 
       - name: Configure kubeconfig
         run: |
