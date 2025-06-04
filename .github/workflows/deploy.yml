@@ -1,0 +1,54 @@
+name: CI/CD Ecommerce Platform
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+
+      - name: Build JAR files
+        run: |
+          ./mvnw clean package -DskipTests
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push product-service image
+        run: |
+          docker build -t kategh/product-service ./product-service
+          docker push kategh/product-service
+
+      - name: Build and push order-service image
+        run: |
+          docker build -t kategh/order-service ./order-service
+          docker push kategh/order-service
+
+      - name: Build and push payment-service image
+        run: |
+          docker build -t kategh/payment-service ./payment-service
+          docker push kategh/payment-service
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Configure kubeconfig
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s/
