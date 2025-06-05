@@ -48,18 +48,18 @@ jobs:
 
       - name: Build and push product-service image
         run: |
-          docker build -t kate-gh/product-service ./product-service
-          docker push kate-gh/product-service
+          docker build -t kawtar2/product-service ./product-service
+          docker push kawtar2/product-service
 
       - name: Build and push order-service image
         run: |
-          docker build -t kate-gh/order-service ./order-service
-          docker push kate-gh/order-service
+          docker build -t kawtar2/order-service ./order-service
+          docker push kawtar2/order-service
 
       - name: Build and push payment-service image
         run: |
-          docker build -t kate-gh/payment-service ./payment-service
-          docker push kate-gh/payment-service
+          docker build -t kawtar2/payment-service ./payment-service
+          docker push kawtar2/payment-service
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
