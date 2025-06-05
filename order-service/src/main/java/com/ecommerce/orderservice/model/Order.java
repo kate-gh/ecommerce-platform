@@ -2,6 +2,7 @@ package com.ecommerce.orderservice.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -10,11 +11,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long productId;
-
-    @Column(nullable = false)
-    private Integer quantity;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderItem> items;
 
     @Column(nullable = false)
     private Double totalAmount;
@@ -25,28 +23,24 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // Constructors
+    // Constructeurs
     public Order() {
         this.createdAt = LocalDateTime.now();
         this.status = "PENDING";
     }
 
-    public Order(Long productId, Integer quantity, Double totalAmount) {
+    public Order(List<OrderItem> items, Double totalAmount) {
         this();
-        this.productId = productId;
-        this.quantity = quantity;
+        this.items = items;
         this.totalAmount = totalAmount;
     }
 
-    // Getters and Setters
+    // Getters et Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Long getProductId() { return productId; }
-    public void setProductId(Long productId) { this.productId = productId; }
-
-    public Integer getQuantity() { return quantity; }
-    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public List<OrderItem> getItems() { return items; }
+    public void setItems(List<OrderItem> items) { this.items = items; }
 
     public Double getTotalAmount() { return totalAmount; }
     public void setTotalAmount(Double totalAmount) { this.totalAmount = totalAmount; }
