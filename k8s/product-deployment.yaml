@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: product
-          image: kate-gh/product-service
+          image: kawtar2/product-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8081
           env:
@@ -24,3 +25,16 @@ spec:
               value: root
             - name: SPRING_DATASOURCE_PASSWORD
               value: root
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 20
+            periodSeconds: 5
+

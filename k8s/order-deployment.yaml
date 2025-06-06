@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: order
-          image: kate-gh/order-service
+          image: kawtar2/order-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8082
           env:
@@ -24,3 +25,9 @@ spec:
               value: root
             - name: SPRING_DATASOURCE_PASSWORD
               value: root
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 20
+            periodSeconds: 5

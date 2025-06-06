@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: payment
-          image: kate-gh/payment-service
+          image: kawtar2/payment-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8083
           env:
@@ -24,3 +25,9 @@ spec:
               value: root
             - name: SPRING_DATASOURCE_PASSWORD
               value: root
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8083
+            initialDelaySeconds: 30
+            periodSeconds: 10
