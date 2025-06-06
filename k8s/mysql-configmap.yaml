@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+data:
+  initdb.sql: |
+    CREATE DATABASE IF NOT EXISTS products_db;
+    CREATE DATABASE IF NOT EXISTS orders_db;
+    CREATE DATABASE IF NOT EXISTS payments_db;
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';

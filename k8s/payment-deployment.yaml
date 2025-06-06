@@ -20,7 +20,7 @@ spec:
             - containerPort: 8083
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql:3306/payments_db
+              value: "jdbc:mysql://mysql:3306/payments_db?autoReconnect=true&useSSL=false&failOverReadOnly=false"
             - name: SPRING_DATASOURCE_USERNAME
               value: root
             - name: SPRING_DATASOURCE_PASSWORD
@@ -29,5 +29,5 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8083
-            initialDelaySeconds: 30
+            initialDelaySeconds: 120  # Augmenté à 120s
             periodSeconds: 10
