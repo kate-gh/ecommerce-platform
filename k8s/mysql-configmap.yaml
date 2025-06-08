@@ -7,7 +7,9 @@ data:
     CREATE DATABASE IF NOT EXISTS products_db;
     CREATE DATABASE IF NOT EXISTS orders_db;
     CREATE DATABASE IF NOT EXISTS payments_db;
-
+    -- Autoriser l'accès aux autres services
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
+    FLUSH PRIVILEGES;
     USE products_db;
     CREATE TABLE IF NOT EXISTS product (
         id BIGINT AUTO_INCREMENT PRIMARY KEY,
