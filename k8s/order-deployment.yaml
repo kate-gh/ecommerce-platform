@@ -15,7 +15,7 @@ spec:
       containers:
         - name: order
           image: kawtar2/order-service:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8082
           env:

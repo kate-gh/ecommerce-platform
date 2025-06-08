@@ -15,7 +15,7 @@ spec:
       containers:
         - name: product
           image: kawtar2/product-service:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081
           env:
