@@ -4,18 +4,24 @@ metadata:
   name: mysql-initdb-config
 data:
   initdb.sql: |
+    -- Créer les bases
     CREATE DATABASE IF NOT EXISTS products_db;
     CREATE DATABASE IF NOT EXISTS orders_db;
     CREATE DATABASE IF NOT EXISTS payments_db;
-    -- Autoriser l'accès aux autres services
-    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
+
+    -- Créer l'utilisateur root avec accès externe
+    CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'root';
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
     FLUSH PRIVILEGES;
+
+    -- Créer les tables dans chaque DB
     USE products_db;
     CREATE TABLE IF NOT EXISTS product (
         id BIGINT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         price DECIMAL(10,2) NOT NULL
     );
+    INSERT INTO product (name, price) VALUES ('Laptop', 999.99), ('Smartphone', 599.99);
 
     USE orders_db;
     CREATE TABLE IF NOT EXISTS `order` (
@@ -25,6 +31,8 @@ data:
         total_price DECIMAL(10,2) NOT NULL,
         status VARCHAR(50) NOT NULL
     );
+    INSERT INTO `order` (product_id, quantity, total_price, status)
+    VALUES (1, 2, 1999.98, 'PENDING');
 
     USE payments_db;
     CREATE TABLE IF NOT EXISTS payment (
@@ -33,21 +41,5 @@ data:
         amount DECIMAL(10,2) NOT NULL,
         payment_status VARCHAR(50) NOT NULL
     );
-
-    -- Users + droits
-    CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'root';
-    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
-    FLUSH PRIVILEGES;
-
-    -- Test data
-    USE products_db;
-    INSERT INTO product (name, price) VALUES ('Laptop', 999.99);
-    INSERT INTO product (name, price) VALUES ('Smartphone', 599.99);
-
-    USE orders_db;
-    INSERT INTO `order` (product_id, quantity, total_price, status)
-    VALUES (1, 2, 1999.98, 'PENDING');
-
-    USE payments_db;
     INSERT INTO payment (order_id, amount, payment_status)
     VALUES (1, 1999.98, 'COMPLETED');
