@@ -21,22 +21,22 @@ jobs:
       - name: Give execute permission to mvnw
         run: chmod +x ./mvnw
 
-      - name: Build JAR for product-service
+      - name: Run tests with coverage (product-service)
         run: |
           cd product-service
-          ../mvnw clean package -DskipTests
+          ../mvnw clean verify
           cd ..
 
-      - name: Build JAR for order-service
+      - name: Run tests with coverage (order-service)
         run: |
           cd order-service
-          ../mvnw clean package -DskipTests
+          ../mvnw clean verify
           cd ..
 
-      - name: Build JAR for payment-service
+      - name: Run tests with coverage (payment-service)
         run: |
           cd payment-service
-          ../mvnw clean package -DskipTests
+          ../mvnw clean verify
           cd ..
 
       - name: SonarCloud Scan
@@ -45,6 +45,7 @@ jobs:
           projectBaseDir: .
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
