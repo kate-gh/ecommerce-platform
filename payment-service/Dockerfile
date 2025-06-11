@@ -4,8 +4,14 @@ FROM openjdk:21
 COPY wait-for.sh /wait-for.sh
 RUN chmod +x /wait-for.sh
 
+# Crée un utilisateur non root
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
 # Copie ton fichier JAR
 COPY target/*.jar app.jar
+
+# Change l'utilisateur
+USER appuser
 
 EXPOSE 8083
 
