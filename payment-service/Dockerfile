@@ -1,4 +1,4 @@
-FROM openjdk:21
+FROM openjdk:21-jdk-slim
 
 # Copie le script d’attente
 COPY wait-for.sh /wait-for.sh

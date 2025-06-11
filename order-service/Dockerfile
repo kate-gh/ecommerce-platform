@@ -1,4 +1,4 @@
-FROM openjdk:21
+FROM openjdk:21-jdk-slim
 
 # Crée un utilisateur non root
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
