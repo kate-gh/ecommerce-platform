@@ -22,9 +22,15 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:mysql://mysql:3306/payments_db?autoReconnect=true&useSSL=false&failOverReadOnly=false"
             - name: SPRING_DATASOURCE_USERNAME
-              value: root
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: username
             - name: SPRING_DATASOURCE_PASSWORD
-              value: root
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: password
           livenessProbe:
             httpGet:
               path: /actuator/health
