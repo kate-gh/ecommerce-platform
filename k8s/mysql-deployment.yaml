@@ -18,13 +18,25 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: root
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-password
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-password
             - name: MYSQL_DATABASE
               value: products_db
-            - name: MYSQL_USER
-              value: root
-            - name: MYSQL_PASSWORD
-              value: root
+
+
+
           ports:
             - containerPort: 3306
           volumeMounts:

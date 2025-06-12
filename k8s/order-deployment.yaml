@@ -25,15 +25,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: username
+                  key: mysql-user        # ✅ bon key
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: password
+                  key: mysql-password    # ✅ bon key
+
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8082
             initialDelaySeconds: 60   # Augmenté à 60s
             periodSeconds: 5
+      automountServiceAccountToken: false

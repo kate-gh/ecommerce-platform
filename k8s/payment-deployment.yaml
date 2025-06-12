@@ -12,6 +12,7 @@ spec:
       labels:
         app: payment-service
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: payment
           image: kawtar2/payment-service:latest
@@ -25,12 +26,13 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: username
+                  key: mysql-user     # ✅ Correction ici
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: password
+                  key: mysql-password  # ✅ Correction ici
+
           livenessProbe:
             httpGet:
               path: /actuator/health

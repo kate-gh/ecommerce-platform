@@ -20,10 +20,10 @@ USER appuser
 EXPOSE 8082
 
 # Commande par défaut (ajuste selon ton projet)
-ENTRYPOINT ["sh", "/wait-for.sh"]
+#ENTRYPOINT ["sh", "/wait-for.sh"]
 
 
 
 
 # Démarrage : attends MySQL avant de lancer Spring Boot
-#ENTRYPOINT ["/wait-for.sh", "mysql", "3306", "--", "java", "-jar", "/app.jar"]
+ENTRYPOINT ["/wait-for.sh", "mysql", "3306", "--", "java", "-jar", "/app.jar"]

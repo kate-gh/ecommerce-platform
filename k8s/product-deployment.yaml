@@ -12,6 +12,7 @@ spec:
       labels:
         app: product-service
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: product
           image: kawtar2/product-service:latest
@@ -25,12 +26,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: username
+                  key: mysql-user
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: password
+                  key: mysql-password
           livenessProbe:
             httpGet:
               path: /actuator/health
