@@ -67,13 +67,17 @@ jobs:
         run: |
           docker build -t kawtar2/payment-service ./payment-service
           docker push kawtar2/payment-service
+          
 
-      - name: Deploy to Kubernetes in local VM
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/kawtar/ecommerce-deploy
-            kubectl apply -f k8s/
+      # Skipping remote deployment step, using Minikube locally
+      # Deployment is handled manually via: kubectl apply -f k8s/
+
+      #- name: Deploy to Kubernetes in local VM
+        #uses: appleboy/ssh-action@v0.1.10
+        #with:
+          #host: ${{ secrets.VM_HOST }}
+          #username: ${{ secrets.VM_USER }}
+          #key: ${{ secrets.SSH_PRIVATE_KEY }}
+          #script: |
+            #cd /home/kawtar/ecommerce-deploy
+            #kubectl apply -f k8s/
