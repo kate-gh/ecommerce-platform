@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS product (
     name VARCHAR(255) NOT NULL,
     price DECIMAL(10,2) NOT NULL
 );
+INSERT INTO product (name, price) VALUES ('Laptop', 999.99), ('Smartphone', 599.99);
 
 -- Création des tables pour orders_db
 USE orders_db;
@@ -20,6 +21,8 @@ CREATE TABLE IF NOT EXISTS `order` (
     total_price DECIMAL(10,2) NOT NULL,
     status VARCHAR(50) NOT NULL
 );
+INSERT INTO `order` (product_id, quantity, total_price, status)
+VALUES (1, 2, 1999.98, 'PENDING');
 
 -- Création des tables pour payments_db
 USE payments_db;
@@ -29,16 +32,12 @@ CREATE TABLE IF NOT EXISTS payment (
     amount DECIMAL(10,2) NOT NULL,
     payment_status VARCHAR(50) NOT NULL
 );
-
--- Insertion de données de test
-USE products_db;
-INSERT INTO product (name, price) VALUES ('Laptop', 999.99);
-INSERT INTO product (name, price) VALUES ('Smartphone', 599.99);
-
-USE orders_db;
-INSERT INTO `order` (product_id, quantity, total_price, status) 
-VALUES (1, 2, 1999.98, 'PENDING');
-
-USE payments_db;
-INSERT INTO payment (order_id, amount, payment_status) 
+INSERT INTO payment (order_id, amount, payment_status)
 VALUES (1, 1999.98, 'COMPLETED');
+
+-- 🔐 Création de l'utilisateur utilisé par les microservices
+CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY 'apppass';
+GRANT ALL PRIVILEGES ON products_db.* TO 'appuser'@'%';
+GRANT ALL PRIVILEGES ON orders_db.* TO 'appuser'@'%';
+GRANT ALL PRIVILEGES ON payments_db.* TO 'appuser'@'%';
+FLUSH PRIVILEGES;

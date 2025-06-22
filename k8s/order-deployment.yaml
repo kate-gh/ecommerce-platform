@@ -15,27 +15,37 @@ spec:
       containers:
         - name: order
           image: kawtar2/order-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8082
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mysql://mysql:3306/orders_db?autoReconnect=true&useSSL=false&failOverReadOnly=false"
+              value: "jdbc:mysql://mysql:3306/orders_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: mysql-user        # ✅ bon key
+                  key: mysql-user
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: mysql-password    # ✅ bon key
+                  key: mysql-password
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082 # 8082 ou 8083 selon le microservice
+            initialDelaySeconds: 180  # ⬅️ augmente ce délai
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 6
 
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8082
-            initialDelaySeconds: 60   # Augmenté à 60s
-            periodSeconds: 5
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
       automountServiceAccountToken: false

@@ -16,26 +16,38 @@ spec:
       containers:
         - name: payment
           image: kawtar2/payment-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8083
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mysql://mysql:3306/payments_db?autoReconnect=true&useSSL=false&failOverReadOnly=false"
+              value: "jdbc:mysql://mysql:3306/payments_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: mysql-user     # ✅ Correction ici
+                  key: mysql-user
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: mysql-password  # ✅ Correction ici
-
+                  key: mysql-password
           livenessProbe:
             httpGet:
               path: /actuator/health
+              port: 8083 # 8082 ou 8083 selon le microservice
+            initialDelaySeconds: 180  # ⬅️ augmente ce délai
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 6
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
               port: 8083
-            initialDelaySeconds: 120  # Augmenté à 120s
+            initialDelaySeconds: 120
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+
+

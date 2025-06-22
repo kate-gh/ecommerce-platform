@@ -16,12 +16,12 @@ spec:
       containers:
         - name: product
           image: kawtar2/product-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always  # Force le pull de la nouvelle image
           ports:
             - containerPort: 8081
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mysql://mysql:3306/products_db?autoReconnect=true&useSSL=false&failOverReadOnly=false"
+              value: "jdbc:mysql://mysql:3306/products_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -35,12 +35,17 @@ spec:
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 8081
-            initialDelaySeconds: 120  # Augmenté à 120s
-            periodSeconds: 10
+              port: 8081 # 8082 ou 8083 selon le microservice
+            initialDelaySeconds: 180  # ⬅️ augmente ce délai
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 6
+
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8081
-            initialDelaySeconds: 60   # Augmenté à 60s
-            periodSeconds: 5
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
