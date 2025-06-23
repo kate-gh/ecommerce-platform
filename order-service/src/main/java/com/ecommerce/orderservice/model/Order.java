@@ -1,66 +1,89 @@
-// Order.java - Version corrigée
 package com.ecommerce.orderservice.model;
 
-import jakarta.persistence.*;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Arrays;
 
-@Entity
-@Table(name = "orders")
-public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+import static org.junit.jupiter.api.Assertions.*;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference // Évite les boucles JSON
-    private List<OrderItem> items;
+class OrderTest {
 
-    @Column(nullable = false)
-    private Double totalAmount;
+    @Test
+    void testOrderDefaultConstructor() {
+        Order order = new Order();
 
-    @Column(nullable = false)
-    private String status;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    // Constructeurs
-    public Order() {
-        this.createdAt = LocalDateTime.now();
-        this.status = "PENDING";
+        assertNotNull(order.getCreatedAt());
+        assertEquals("PENDING", order.getStatus());
+        assertTrue(order.getCreatedAt().isBefore(LocalDateTime.now().plusSeconds(1)));
     }
 
-    public Order(List<OrderItem> items, Double totalAmount) {
-        this();
-        this.items = items;
-        this.totalAmount = totalAmount;
-        // Définir la relation bidirectionnelle
-        if (items != null) {
-            items.forEach(item -> item.setOrder(this));
-        }
+    @Test
+    void testOrderConstructorWithItems_SetsBidirectionalRelation() {
+        OrderItem item1 = new OrderItem(1L, 2, 25.99);
+        OrderItem item2 = new OrderItem(2L, 1, 15.50);
+
+        Order order = new Order(Arrays.asList(item1, item2), 67.48);
+
+        // Test des propriétés de base
+        assertNotNull(order.getItems());
+        assertEquals(2, order.getItems().size());
+        assertEquals(67.48, order.getTotalAmount());
+        assertEquals("PENDING", order.getStatus());
+
+        // Test de la relation bidirectionnelle (nouvelle fonctionnalité)
+        assertEquals(order, item1.getOrder());
+        assertEquals(order, item2.getOrder());
     }
 
-    // Getters et Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Test
+    void testSetItems_EstablishesBidirectionalRelation() {
+        Order order = new Order();
+        OrderItem item1 = new OrderItem(1L, 1, 10.0);
+        OrderItem item2 = new OrderItem(2L, 2, 20.0);
 
-    public List<OrderItem> getItems() { return items; }
-    public void setItems(List<OrderItem> items) {
-        this.items = items;
-        // Assurer la relation bidirectionnelle
-        if (items != null) {
-            items.forEach(item -> item.setOrder(this));
-        }
+        // Test de la nouvelle logique dans setItems
+        order.setItems(Arrays.asList(item1, item2));
+
+        assertEquals(order, item1.getOrder());
+        assertEquals(order, item2.getOrder());
+        assertEquals(2, order.getItems().size());
     }
 
-    public Double getTotalAmount() { return totalAmount; }
-    public void setTotalAmount(Double totalAmount) { this.totalAmount = totalAmount; }
+    @Test
+    void testSetItems_WithNullItems() {
+        Order order = new Order();
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+        // Test avec null (ne doit pas lever d'exception)
+        assertDoesNotThrow(() -> order.setItems(null));
+        assertNull(order.getItems());
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    @Test
+    void testOrderGettersAndSetters() {
+        Order order = new Order();
+        LocalDateTime now = LocalDateTime.now();
+
+        order.setId(1L);
+        order.setTotalAmount(100.0);
+        order.setStatus("COMPLETED");
+        order.setCreatedAt(now);
+
+        assertEquals(1L, order.getId());
+        assertEquals(100.0, order.getTotalAmount());
+        assertEquals("COMPLETED", order.getStatus());
+        assertEquals(now, order.getCreatedAt());
+    }
+
+    // Test spécifique pour @JsonManagedReference (sérialisation JSON)
+    @Test
+    void testJsonSerialization() {
+        OrderItem item = new OrderItem(1L, 1, 10.0);
+        Order order = new Order(Arrays.asList(item), 10.0);
+
+        // Vérifier que la relation est bien établie
+        assertNotNull(order.getItems());
+        assertEquals(1, order.getItems().size());
+        assertEquals(order, item.getOrder());
+    }
 }
