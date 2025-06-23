@@ -40,7 +40,7 @@ public class OrderController {
             Order savedOrder = orderService.createOrder(order);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
         } catch (Exception e) {
-            e.printStackTrace(); // Pour debug
+            logger.error("Failed to create order", e); // ✅ Correction ici
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
