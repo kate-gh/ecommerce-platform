@@ -1,7 +1,8 @@
-// order-service/src/main/java/com/ecommerce/orderservice/model/OrderItem.java
+// OrderItem.java - Version corrigée
 package com.ecommerce.orderservice.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class OrderItem {
@@ -20,6 +21,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonBackReference // Évite les boucles JSON
     private Order order;
 
     // Constructeurs

@@ -1,6 +1,8 @@
+// Order.java - Version corrigée
 package com.ecommerce.orderservice.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,6 +14,7 @@ public class Order {
     private Long id;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference // Évite les boucles JSON
     private List<OrderItem> items;
 
     @Column(nullable = false)
@@ -33,6 +36,10 @@ public class Order {
         this();
         this.items = items;
         this.totalAmount = totalAmount;
+        // Définir la relation bidirectionnelle
+        if (items != null) {
+            items.forEach(item -> item.setOrder(this));
+        }
     }
 
     // Getters et Setters
@@ -40,7 +47,13 @@ public class Order {
     public void setId(Long id) { this.id = id; }
 
     public List<OrderItem> getItems() { return items; }
-    public void setItems(List<OrderItem> items) { this.items = items; }
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+        // Assurer la relation bidirectionnelle
+        if (items != null) {
+            items.forEach(item -> item.setOrder(this));
+        }
+    }
 
     public Double getTotalAmount() { return totalAmount; }
     public void setTotalAmount(Double totalAmount) { this.totalAmount = totalAmount; }
