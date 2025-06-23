@@ -7,6 +7,9 @@ import com.ecommerce.orderservice.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.util.List;
 
@@ -14,6 +17,7 @@ import java.util.List;
 @RequestMapping("/orders")
 @CrossOrigin(origins = "*") // Pour les tests depuis différentes sources
 public class OrderController {
+    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     private final OrderRepository repository;
     private final OrderService orderService;
