@@ -80,7 +80,7 @@ import com.ecommerce.productservice.service.ProductService;
 import com.ecommerce.productservice.model.Product;
 
 @ExtendWith(MockitoExtension.class)
-public class ProductServiceApplicationTests {
+public class ProductServiceApplicationTest {
 
 	@Mock
 	private ProductRepository productRepository;
