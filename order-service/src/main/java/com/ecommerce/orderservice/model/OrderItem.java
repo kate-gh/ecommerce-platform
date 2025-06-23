@@ -1,79 +1,51 @@
+// OrderItem.java - Version corrigée
 package com.ecommerce.orderservice.model;
 
-import org.junit.jupiter.api.Test;
+import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import static org.junit.jupiter.api.Assertions.*;
+@Entity
+public class OrderItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-class OrderItemTest {
+    @Column(nullable = false)
+    private Long productId;
 
-    @Test
-    void testOrderItemDefaultConstructor() {
-        OrderItem item = new OrderItem();
+    @Column(nullable = false)
+    private Integer quantity;
 
-        assertNull(item.getId());
-        assertNull(item.getProductId());
-        assertNull(item.getQuantity());
-        assertNull(item.getPrice());
-        assertNull(item.getOrder());
+    @Column(nullable = false)
+    private Double price; // Prix unitaire
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    @JsonBackReference // Évite les boucles JSON
+    private Order order;
+
+    // Constructeurs
+    public OrderItem() {}
+
+    public OrderItem(Long productId, Integer quantity, Double price) {
+        this.productId = productId;
+        this.quantity = quantity;
+        this.price = price;
     }
 
-    @Test
-    void testOrderItemConstructorWithParameters() {
-        OrderItem item = new OrderItem(1L, 5, 29.99);
+    // Getters et setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-        assertEquals(1L, item.getProductId());
-        assertEquals(5, item.getQuantity());
-        assertEquals(29.99, item.getPrice());
-        assertNull(item.getOrder()); // Order n'est pas défini dans ce constructeur
-    }
+    public Long getProductId() { return productId; }
+    public void setProductId(Long productId) { this.productId = productId; }
 
-    @Test
-    void testOrderItemGettersAndSetters() {
-        OrderItem item = new OrderItem();
-        Order order = new Order();
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
 
-        item.setId(1L);
-        item.setProductId(100L);
-        item.setQuantity(3);
-        item.setPrice(15.75);
-        item.setOrder(order);
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
 
-        assertEquals(1L, item.getId());
-        assertEquals(100L, item.getProductId());
-        assertEquals(3, item.getQuantity());
-        assertEquals(15.75, item.getPrice());
-        assertEquals(order, item.getOrder());
-    }
-
-    // Test spécifique pour @JsonBackReference (évite la sérialisation cyclique)
-    @Test
-    void testBidirectionalRelationWithOrder() {
-        Order order = new Order();
-        OrderItem item = new OrderItem(1L, 2, 25.0);
-
-        // Établir la relation
-        item.setOrder(order);
-        order.setItems(java.util.Arrays.asList(item));
-
-        // Vérifier la relation bidirectionnelle
-        assertEquals(order, item.getOrder());
-        assertTrue(order.getItems().contains(item));
-        assertEquals(1, order.getItems().size());
-    }
-
-    @Test
-    void testOrderItemWithNullValues() {
-        OrderItem item = new OrderItem();
-
-        // Test avec des valeurs null
-        item.setProductId(null);
-        item.setQuantity(null);
-        item.setPrice(null);
-        item.setOrder(null);
-
-        assertNull(item.getProductId());
-        assertNull(item.getQuantity());
-        assertNull(item.getPrice());
-        assertNull(item.getOrder());
-    }
+    public Order getOrder() { return order; }
+    public void setOrder(Order order) { this.order = order; }
 }
