@@ -83,10 +83,16 @@ class OrderServiceApplicationTests {
 	// ✅ Test du controller : POST /orders
 	@Test
 	void addOrder_ShouldReturnCreated() {
-		OrderController controller = new OrderController(orderRepository, orderService);
-		Order order = new Order();
+		OrderRepository mockRepo = mock(OrderRepository.class);
+		OrderService mockService = mock(OrderService.class);
+		OrderController controller = new OrderController(mockRepo, mockService);
 
-		when(orderService.createOrder(any(Order.class))).thenReturn(order);
+		OrderItem item = new OrderItem(1L, 2, 100.0);
+		Order order = new Order();
+		order.setItems(Collections.singletonList(item));
+		order.setTotalAmount(200.0);
+
+		when(mockService.createOrder(any(Order.class))).thenReturn(order);
 
 		ResponseEntity<Order> response = controller.add(order);
 
@@ -94,18 +100,20 @@ class OrderServiceApplicationTests {
 		assertEquals(order, response.getBody());
 	}
 
+
 	// ✅ Test du controller : GET /orders/{id}
 	@Test
 	void getById_ShouldReturnOrder() {
-		OrderController controller = new OrderController(orderRepository, orderService);
 		Order order = new Order();
 		order.setId(1L);
 
-		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(orderRepository.findById(eq(1L))).thenReturn(Optional.of(order));
 
+		OrderController controller = new OrderController(orderRepository, orderService);
 		ResponseEntity<Order> response = controller.getById(1L);
 
 		assertEquals(200, response.getStatusCodeValue());
 		assertEquals(1L, response.getBody().getId());
 	}
+
 }
