@@ -1,22 +1,26 @@
 package com.ecommerce.orderservice;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-import java.util.Collections;
-import java.util.Optional;
+import com.ecommerce.orderservice.controller.OrderController;
+import com.ecommerce.orderservice.model.Order;
+import com.ecommerce.orderservice.model.OrderItem;
+import com.ecommerce.orderservice.repository.OrderRepository;
+import com.ecommerce.orderservice.service.OrderService;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.ecommerce.orderservice.model.Order;
-import com.ecommerce.orderservice.model.OrderItem;
-import com.ecommerce.orderservice.repository.OrderRepository;
-import com.ecommerce.orderservice.service.OrderService;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceApplicationTests {
@@ -27,47 +31,81 @@ class OrderServiceApplicationTests {
 	@InjectMocks
 	private OrderService orderService;
 
+	// ✅ Test du service : création de commande
 	@Test
 	void createOrder_ShouldCalculateTotal() {
-		// Arrange
-		// Création correcte d'OrderItem avec les 3 paramètres
-		OrderItem item = new OrderItem(1L, 2, 999.99); // Product ID, quantity, price
-
-		// Création d'une commande avec le constructeur par défaut
+		OrderItem item = new OrderItem(1L, 2, 999.99);
 		Order order = new Order();
 		order.setItems(Collections.singletonList(item));
 
-		// Configuration du mock
 		when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> {
 			Order saved = invocation.getArgument(0);
 			saved.setId(1L);
-			// Le service devrait calculer le total automatiquement
 			saved.setTotalAmount(1999.98);
 			return saved;
 		});
 
-		// Act
 		Order result = orderService.createOrder(order);
 
-		// Assert
 		assertNotNull(result.getId());
 		assertEquals(1999.98, result.getTotalAmount(), 0.001);
 	}
 
+	// ✅ Test du service : statut
 	@Test
 	void getOrderStatus_ShouldReturnStatus() {
-		// Arrange
-		// Création d'une commande avec le constructeur par défaut
 		Order order = new Order();
 		order.setId(1L);
 		order.setStatus("PROCESSING");
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
-		// Act
 		String status = orderService.getOrderStatus(1L);
 
-		// Assert
 		assertEquals("PROCESSING", status);
+	}
+
+	// ✅ Test du controller : GET /orders
+	@Test
+	void getAllOrders_ShouldReturnList() {
+		OrderController controller = new OrderController(orderRepository, orderService);
+		Order order = new Order();
+		order.setId(1L);
+
+		when(orderRepository.findAll()).thenReturn(List.of(order));
+
+		ResponseEntity<List<Order>> response = controller.getAll();
+
+		assertEquals(200, response.getStatusCodeValue());
+		assertEquals(1, response.getBody().size());
+	}
+
+	// ✅ Test du controller : POST /orders
+	@Test
+	void addOrder_ShouldReturnCreated() {
+		OrderController controller = new OrderController(orderRepository, orderService);
+		Order order = new Order();
+
+		when(orderService.createOrder(any(Order.class))).thenReturn(order);
+
+		ResponseEntity<Order> response = controller.add(order);
+
+		assertEquals(201, response.getStatusCodeValue());
+		assertEquals(order, response.getBody());
+	}
+
+	// ✅ Test du controller : GET /orders/{id}
+	@Test
+	void getById_ShouldReturnOrder() {
+		OrderController controller = new OrderController(orderRepository, orderService);
+		Order order = new Order();
+		order.setId(1L);
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		ResponseEntity<Order> response = controller.getById(1L);
+
+		assertEquals(200, response.getStatusCodeValue());
+		assertEquals(1L, response.getBody().getId());
 	}
 }
