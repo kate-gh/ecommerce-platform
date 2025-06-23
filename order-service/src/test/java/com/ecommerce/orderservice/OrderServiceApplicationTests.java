@@ -116,4 +116,33 @@ class OrderServiceApplicationTests {
 		assertEquals(1L, response.getBody().getId());
 	}
 
+	@Test
+	void health_ShouldReturnStatusOk() {
+		OrderRepository mockRepo = mock(OrderRepository.class);
+		OrderService mockService = mock(OrderService.class);
+		OrderController controller = new OrderController(mockRepo, mockService);
+
+		ResponseEntity<String> response = controller.health();
+
+		assertEquals(200, response.getStatusCodeValue());
+		assertEquals("Order Service is running!", response.getBody());
+	}
+
+	@Test
+	void getById_ShouldReturnOrder() {
+		OrderRepository mockRepo = mock(OrderRepository.class);
+		OrderService mockService = mock(OrderService.class);
+		OrderController controller = new OrderController(mockRepo, mockService);
+
+		Order order = new Order();
+		order.setId(1L);
+
+		when(mockRepo.findById(1L)).thenReturn(Optional.of(order));
+
+		ResponseEntity<Order> response = controller.getById(1L);
+
+		assertEquals(200, response.getStatusCodeValue());
+		assertEquals(order.getId(), response.getBody().getId());
+	}
+
 }
